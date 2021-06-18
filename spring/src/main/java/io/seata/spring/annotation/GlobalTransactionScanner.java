@@ -60,6 +60,7 @@ import static io.seata.common.DefaultValues.DEFAULT_DISABLE_GLOBAL_TRANSACTION;
  * The type Global transaction scanner.
  *
  * @author slievrly
+ * AbstractAutoProxyCreator : aop和事务的顶层抽象父类
  */
 public class GlobalTransactionScanner extends AbstractAutoProxyCreator
     implements ConfigurationChangeListener, InitializingBean, ApplicationContextAware, DisposableBean {
@@ -253,9 +254,11 @@ public class GlobalTransactionScanner extends AbstractAutoProxyCreator
                     ConfigurationCache.addConfigListener(ConfigurationKeys.DISABLE_GLOBAL_TRANSACTION,
                         (ConfigurationChangeListener)interceptor);
                 } else {
+                    //拿到bean的Class
                     Class<?> serviceInterface = SpringProxyUtils.findTargetClass(bean);
+                    //bean使用jdk动态代理的接口
                     Class<?>[] interfacesIfJdk = SpringProxyUtils.findInterfaces(bean);
-
+                    //判断class与interface的所有方法是哪个 看是否存在 GlobalTransactional
                     if (!existsAnnotation(new Class[]{serviceInterface})
                         && !existsAnnotation(interfacesIfJdk)) {
                         return bean;
