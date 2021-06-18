@@ -53,13 +53,12 @@ public class TransactionalTemplate {
             throw new ShouldNeverHappenException("transactionInfo does not exist");
         }
         try {
-
+            //开启全局事务
             // 2. begin transaction
             beginTransaction(txInfo, tx);
 
             Object rs = null;
             try {
-
                 // Do Your Business
                 rs = business.execute();
 
@@ -119,8 +118,11 @@ public class TransactionalTemplate {
 
     private void beginTransaction(TransactionInfo txInfo, GlobalTransaction tx) throws TransactionalExecutor.ExecutionException {
         try {
+            //事务开启前的钩子函数
             triggerBeforeBegin();
+            //开启全局事务
             tx.begin(txInfo.getTimeOut(), txInfo.getName());
+            //事务开启之后的钩子函数
             triggerAfterBegin();
         } catch (TransactionException txe) {
             throw new TransactionalExecutor.ExecutionException(tx, txe,

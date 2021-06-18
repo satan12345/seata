@@ -45,10 +45,12 @@ public class GlobalTransactionContext {
      * @return null if no transaction context there.
      */
     private static GlobalTransaction getCurrent() {
+        //从threadLocal中获取全局事务id
         String xid = RootContext.getXID();
         if (xid == null) {
             return null;
         }
+        //全局事务id不为空的时候则将xid封装为DefaultGlobalTransaction
         return new DefaultGlobalTransaction(xid, GlobalStatus.Begin, GlobalTransactionRole.Participant);
     }
 
@@ -60,6 +62,7 @@ public class GlobalTransactionContext {
     public static GlobalTransaction getCurrentOrCreate() {
         GlobalTransaction tx = getCurrent();
         if (tx == null) {
+            //全局事务对象为空的时候则创建一个
             return createNew();
         }
         return tx;

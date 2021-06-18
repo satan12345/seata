@@ -104,11 +104,20 @@ public class GlobalTransactionalInterceptor implements ConfigurationChangeListen
                                            final GlobalTransactional globalTrxAnno) throws Throwable {
         try {
             return transactionalTemplate.execute(new TransactionalExecutor() {
+                /**
+                 * 业务逻辑
+                 * @return
+                 * @throws Throwable
+                 */
                 @Override
                 public Object execute() throws Throwable {
                     return methodInvocation.proceed();
                 }
 
+                /**
+                 * 获取全局事务的名字
+                 * @return
+                 */
                 public String name() {
                     String name = globalTrxAnno.name();
                     if (!StringUtils.isNullOrEmpty(name)) {
@@ -117,11 +126,18 @@ public class GlobalTransactionalInterceptor implements ConfigurationChangeListen
                     return formatMethod(methodInvocation.getMethod());
                 }
 
+                /**
+                 * 将注解 GlobalTransactional上的信息转成TransactionInfo 对象
+                 * @return
+                 */
                 @Override
                 public TransactionInfo getTransactionInfo() {
                     TransactionInfo transactionInfo = new TransactionInfo();
+                    //超时信息
                     transactionInfo.setTimeOut(globalTrxAnno.timeoutMills());
+                    //全局事务名称
                     transactionInfo.setName(name());
+                    //回滚规则
                     Set<RollbackRule> rollbackRules = new LinkedHashSet<>();
                     for (Class<?> rbRule : globalTrxAnno.rollbackFor()) {
                         rollbackRules.add(new RollbackRule(rbRule));

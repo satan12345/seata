@@ -24,12 +24,14 @@ public enum GlobalTransactionRole {
 
     /**
      * The Launcher.
+     * 发起者 即TM 事务管理器
      */
     // The one begins the current global transaction.
     Launcher,
 
     /**
      * The Participant.
+     * 参与者 即RM 资源管理器
      */
     // The one just joins into a existing global transaction.
     Participant
